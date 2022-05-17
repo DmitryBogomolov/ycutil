@@ -24,7 +24,7 @@ def main() -> None:
     update_function_parser.add_argument('target_dir', help='path to directory')
 
     invoke_function_parser = subparsers.add_parser(
-        name='invoke-function',
+        name='function-invoke',
         description='Invoke function',
     )
     invoke_function_parser.add_argument('target_dir', help='path to directory')
