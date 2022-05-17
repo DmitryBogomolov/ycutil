@@ -5,12 +5,11 @@ from tempfile import TemporaryDirectory
 from subprocess import run
 
 def update_function(dir_path: str) -> None:
-    dir_path = path.abspath(dir_path)
     cfg = read_config(dir_path)
-    with TemporaryDirectory(dir=dir_path) as tmp_path:
+    with TemporaryDirectory(dir=cfg.root_dir) as tmp_path:
         zip_path = path.join(tmp_path, cfg.name + '.zip')
         print('###', zip_path)
-        pack_code(zip_path, dir_path)
+        pack_code(zip_path, cfg.root_dir)
         call_yc(cfg, zip_path)
 
 def pack_code(zip_path: str, dir_path: str) -> None:

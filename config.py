@@ -5,6 +5,7 @@ import json
 CONFIG_NAME = '.ycconf'
 
 class Config(NamedTuple):
+    root_dir: str
     name: str
     entrypoint: str
     timeout: int = 10
@@ -12,6 +13,7 @@ class Config(NamedTuple):
     runtime: str = 'python37'
 
 def read_config(dir_path: str) -> Config:
-    with open(path.join(dir_path, CONFIG_NAME), encoding='utf8') as file_obj:
+    file_path = path.join(path.abspath(dir_path), CONFIG_NAME)
+    with open(file_path, encoding='utf8') as file_obj:
         content = json.load(file_obj)
-    return Config(**content)
+    return Config(root_dir=path.abspath(dir_path), **content)

@@ -1,4 +1,4 @@
-from os import path
+from config import read_config
 
 def invoke_function(dir_path: str) -> None:
-    dir_path = path.abspath(dir_path)
+    cfg = read_config(dir_path)
