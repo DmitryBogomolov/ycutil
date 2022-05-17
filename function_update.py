@@ -8,7 +8,6 @@ def update_function(dir_path: str) -> None:
     cfg = read_config(dir_path)
     with TemporaryDirectory(dir=cfg.root_dir) as tmp_path:
         zip_path = path.join(tmp_path, cfg.name + '.zip')
-        print('###', zip_path)
         pack_code(zip_path, cfg.root_dir)
         call_yc(cfg, zip_path)
 
