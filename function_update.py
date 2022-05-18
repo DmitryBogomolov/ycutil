@@ -1,8 +1,8 @@
 from os import path, listdir
-from config import Config
 from zipfile import ZipFile
 from tempfile import TemporaryDirectory
-from subprocess import run
+from config import Config
+from yc_runner import run_yc
 
 def update_function(dir_path: str) -> None:
     cfg = Config.from_dir(dir_path)
@@ -25,13 +25,12 @@ def walk_code(root_path: str, zip_file: ZipFile, dir_path: str) -> None:
             walk_code(root_path, zip_file, item_path)
 
 def call_yc(cfg: Config, zip_path: str) -> None:
-    args = [
-        'yc', 'serverless', 'function', 'version', 'create',
+    run_yc([
+        'version', 'create',
         '--function-name', cfg.name,
         '--entrypoint', cfg.entrypoint,
         '--runtime', cfg.runtime,
         '--memory', f'{cfg.memory}m',
         '--execution-timeout', f'{cfg.timeout}s',
         '--source-path', zip_path,
-    ]
-    run(args, check=True)
+    ])
