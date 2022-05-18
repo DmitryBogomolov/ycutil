@@ -1,11 +1,11 @@
 from os import path, listdir
-from config import read_config, Config
+from config import Config
 from zipfile import ZipFile
 from tempfile import TemporaryDirectory
 from subprocess import run
 
 def update_function(dir_path: str) -> None:
-    cfg = read_config(dir_path)
+    cfg = Config.from_dir(dir_path)
     with TemporaryDirectory(dir=cfg.root_dir) as tmp_path:
         zip_path = path.join(tmp_path, cfg.name + '.zip')
         pack_code(zip_path, cfg.root_dir)
