@@ -1,20 +1,30 @@
+from typing import NamedTuple, Dict, Any
 from os import path, listdir
 from zipfile import ZipFile
 from tempfile import TemporaryDirectory
+from json import loads as load_json
+from datetime import datetime
 from config import Config
 from yc_runner import run_yc
 
-def update_function(dir_path: str) -> None:
+class UpdateInfo(NamedTuple):
+    id: str
+    created_at: datetime
+
+def update_function(dir_path: str) -> UpdateInfo:
     cfg = Config.from_dir(dir_path)
     with TemporaryDirectory(dir=cfg.root_dir) as tmp_path:
         zip_path = path.join(tmp_path, cfg.name + '.zip')
         pack_code(zip_path, cfg.root_dir)
-        call_yc(cfg, zip_path)
+        status = call_yc(cfg, zip_path)
+    return UpdateInfo(
+        id = status['id'],
+        created_at = datetime.strptime(status['created_at'], '%Y-%m-%dT%H:%M:%S.%fZ')
+    )
 
 def pack_code(zip_path: str, dir_path: str) -> None:
     with ZipFile(zip_path, mode='w') as zip_file:
         walk_code(dir_path, zip_file, dir_path)
-    return zip_path
 
 def walk_code(root_path: str, zip_file: ZipFile, dir_path: str) -> None:
     for dir_item in listdir(dir_path):
@@ -24,9 +34,9 @@ def walk_code(root_path: str, zip_file: ZipFile, dir_path: str) -> None:
         elif path.isdir(item_path):
             walk_code(root_path, zip_file, item_path)
 
-def call_yc(cfg: Config, zip_path: str) -> None:
-    run_yc([
-        'version', 'create',
+def call_yc(cfg: Config, zip_path: str) -> Dict[str, Any]:
+    out, _ = run_yc([
+        'version', 'create', '--no-user-output', '--format', 'json',
         '--function-name', cfg.name,
         '--entrypoint', cfg.entrypoint,
         '--runtime', cfg.runtime,
@@ -34,3 +44,4 @@ def call_yc(cfg: Config, zip_path: str) -> None:
         '--execution-timeout', f'{cfg.timeout}s',
         '--source-path', zip_path,
     ])
+    return load_json(out)
