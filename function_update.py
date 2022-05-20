@@ -7,6 +7,7 @@ from datetime import datetime
 from config import Config
 from logger import logger
 from yc_runner import run_yc
+from helper import parse_date
 
 class UpdateInfo(NamedTuple):
     id: str
@@ -21,7 +22,7 @@ def update_function(dir_path: str) -> UpdateInfo:
         status = call_yc(cfg, zip_path)
     return UpdateInfo(
         id = status['id'],
-        created_at = datetime.strptime(status['created_at'], '%Y-%m-%dT%H:%M:%S.%fZ')
+        created_at = parse_date(status['created_at'])
     )
 
 def pack_code(zip_path: str, dir_path: str) -> None:

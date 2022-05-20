@@ -4,6 +4,7 @@ import argparse
 from function_create import create_function
 from function_update import update_function
 from function_invoke import invoke_function
+from function_list import list_functions
 
 def main() -> None:
     parser = argparse.ArgumentParser(
@@ -29,6 +30,11 @@ def main() -> None:
     )
     invoke_function_parser.add_argument('target_dir', help='path to directory')
 
+    subparsers.add_parser(
+        name='function-list',
+        description='List functions',
+    )
+
     args = parser.parse_args()
     command = args.command
     if not command:
@@ -41,6 +47,8 @@ def main() -> None:
         update_function(args.target_dir)
     if command == 'function-invoke':
         invoke_function(args.target_dir)
+    if command == 'function-list':
+        list_functions()
 
 if __name__ == '__main__':
     main()
