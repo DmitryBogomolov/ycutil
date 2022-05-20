@@ -38,7 +38,7 @@ class Config(NamedTuple):
         if len(content) > 0:
             fields = ', '.join(content.keys())
             raise ValueError(f'extra fields: {fields}')
-        logger.info(f'directory: {root_dir}')
+        logger.info('directory: %s', root_dir)
         return Config(
             root_dir=root_dir,
             name=name,

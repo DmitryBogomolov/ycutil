@@ -5,6 +5,7 @@ from tempfile import TemporaryDirectory
 from json import loads as load_json
 from datetime import datetime
 from config import Config
+from logger import logger
 from yc_runner import run_yc
 
 class UpdateInfo(NamedTuple):
@@ -12,6 +13,7 @@ class UpdateInfo(NamedTuple):
     created_at: datetime
 
 def update_function(dir_path: str) -> UpdateInfo:
+    logger.log('# update_function #')
     cfg = Config.from_dir(dir_path)
     with TemporaryDirectory(dir=cfg.root_dir) as tmp_path:
         zip_path = path.join(tmp_path, cfg.name + '.zip')
@@ -25,6 +27,7 @@ def update_function(dir_path: str) -> UpdateInfo:
 def pack_code(zip_path: str, dir_path: str) -> None:
     with ZipFile(zip_path, mode='w') as zip_file:
         walk_code(dir_path, zip_file, dir_path)
+    logger.info('archive: %s', zip_path)
 
 def walk_code(root_path: str, zip_file: ZipFile, dir_path: str) -> None:
     for dir_item in listdir(dir_path):
