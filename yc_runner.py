@@ -1,4 +1,3 @@
-from cmath import log
 from typing import List, Tuple
 from subprocess import CalledProcessError, run, PIPE
 from logger import logger
@@ -11,7 +10,7 @@ def run_yc(args: List[str]) -> Tuple[str, str]:
         if proc.stdout:
             logger.info('yc out: %s', proc.stdout)
         if proc.stderr:
-            logger.warn('yc err: %s', proc.stderr)
+            logger.info('yc err: %s', proc.stderr)
         return (proc.stdout, proc.stderr)
     except CalledProcessError as err:
         if proc.stdout:
