@@ -13,7 +13,7 @@ class UpdateInfo(NamedTuple):
     created_at: datetime
 
 def update_function(dir_path: str) -> UpdateInfo:
-    logger.log('# update_function #')
+    logger.info('# update_function #')
     cfg = Config.from_dir(dir_path)
     with TemporaryDirectory(dir=cfg.root_dir) as tmp_path:
         zip_path = path.join(tmp_path, cfg.name + '.zip')
