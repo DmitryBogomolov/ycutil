@@ -9,19 +9,19 @@ from logger import logger
 from yc_runner import run_yc
 from helper import parse_date
 
-class UpdateInfo(NamedTuple):
-    id: str
+class FunctionUpdateInfo(NamedTuple):
+    version_id: str
     created_at: datetime
 
-def update_function(dir_path: str) -> UpdateInfo:
+def update_function(dir_path: str) -> FunctionUpdateInfo:
     logger.info('# update_function #')
     cfg = Config.from_dir(dir_path)
     with TemporaryDirectory(dir=cfg.root_dir) as tmp_path:
         zip_path = path.join(tmp_path, cfg.name + '.zip')
         pack_code(zip_path, cfg.root_dir)
         status = call_yc(cfg, zip_path)
-    return UpdateInfo(
-        id = status['id'],
+    return FunctionUpdateInfo(
+        version_id = status['id'],
         created_at = parse_date(status['created_at'])
     )
 
