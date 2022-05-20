@@ -2,6 +2,7 @@
 
 import argparse
 from function_create import create_function
+from function_delete import delete_function
 from function_update import update_function
 from function_invoke import invoke_function
 from function_list import list_functions
@@ -17,6 +18,12 @@ def main() -> None:
         description='Create function',
     )
     create_function_parser.add_argument('target_dir', help='path to directory')
+
+    delete_function_parser = subparsers.add_parser(
+        name='function-delete',
+        description='Delete function',
+    )
+    delete_function_parser.add_argument('target_dir', help='path to directory')
 
     update_function_parser = subparsers.add_parser(
         name='function-update',
@@ -43,6 +50,8 @@ def main() -> None:
 
     if command == 'function-create':
         create_function(args.target_dir)
+    if command == 'function-delete':
+        delete_function(args.target_dir)
     if command == 'function-update':
         update_function(args.target_dir)
     if command == 'function-invoke':
