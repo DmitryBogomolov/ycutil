@@ -1,4 +1,3 @@
-import re
 from typing import List, Any, cast
 from json import loads as load_json
 from function_info import FunctionInfo
