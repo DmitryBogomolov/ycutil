@@ -1,6 +1,7 @@
 from typing import NamedTuple, Dict, Any, cast
 from os import path
-import json
+from json import load as load_json
+from logger import logger
 
 CONFIG_NAME = '.ycconf'
 RUNTIMES = set(['python37', 'python38', 'python39'])
@@ -15,9 +16,10 @@ class Config(NamedTuple):
 
     @staticmethod
     def from_dir(dir_path: str) -> 'Config':
-        file_path = path.join(path.abspath(dir_path), CONFIG_NAME)
+        root_dir = path.abspath(dir_path)
+        file_path = path.join(root_dir, CONFIG_NAME)
         with open(file_path, encoding='utf8') as file_obj:
-            content = cast(Dict[str, Any], json.load(file_obj))
+            content = cast(Dict[str, Any], load_json(file_obj))
         name = content.pop('name', '')
         if not name:
             raise ValueError('no "name" field')
@@ -36,8 +38,9 @@ class Config(NamedTuple):
         if len(content) > 0:
             fields = ', '.join(content.keys())
             raise ValueError(f'extra fields: {fields}')
+        logger.info('directory: %s', root_dir)
         return Config(
-            root_dir=path.abspath(dir_path),
+            root_dir=root_dir,
             name=name,
             entrypoint=entrypoint,
             timeout=timeout,
