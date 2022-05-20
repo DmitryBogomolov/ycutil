@@ -1,15 +1,10 @@
 import re
-from typing import NamedTuple, List, Dict, Any, cast
-from datetime import datetime
+from typing import List, Dict, Any, cast
 from json import loads as load_json
+from function_info import FunctionInfo
 from logger import logger
 from yc_runner import run_yc
 from helper import parse_date
-
-class FunctionInfo(NamedTuple):
-    id: str
-    name: str
-    created_at: datetime
 
 def list_functions() -> List[FunctionInfo]:
     logger.info('# list functions #')
