@@ -7,6 +7,7 @@ from function_update import update_function
 from function_invoke import invoke_function
 from function_list import list_functions
 from function_logs import get_function_logs
+from function_url import is_url_invoke, set_url_invoke
 
 def main() -> None:
     parser = argparse.ArgumentParser(
@@ -49,6 +50,14 @@ def main() -> None:
         description='List functions',
     )
 
+    url_invoke_parser = subparsers.add_parser(
+        name='function-url-invoke',
+        description='Manage function url invoke',
+    )
+    url_invoke_parser.add_argument('target_dir', help='path to directory')
+    url_invoke_parser.add_argument('--on', action='store_true', help='turn on')
+    url_invoke_parser.add_argument('--off', action='store_true', help='turn off')
+
     args = parser.parse_args()
     command = args.command
     if not command:
@@ -67,6 +76,12 @@ def main() -> None:
         get_function_logs(args.target_dir)
     if command == 'function-list':
         list_functions()
+    if command == 'function-url-invoke':
+        if args.on or args.off:
+            set_url_invoke(args.target_dir, args.on)
+        else:
+            is_url_invoke(args.target_dir)
+
 
 if __name__ == '__main__':
     main()
