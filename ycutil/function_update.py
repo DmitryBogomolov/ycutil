@@ -31,7 +31,7 @@ def walk_code(root_path: str, zip_file: ZipFile, dir_path: str) -> None:
 
 def call_yc(cfg: Config, zip_path: str) -> str:
     out, _ = run_yc([
-        'version', 'create', '--no-user-output', '--format', 'json',
+        'version', 'create',
         '--function-name', cfg.name,
         '--entrypoint', cfg.entrypoint,
         '--runtime', cfg.runtime,
