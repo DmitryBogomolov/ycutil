@@ -1,6 +1,6 @@
 from typing import List, Any, cast
 from json import loads as load_json
-from function_info import FunctionVersionInfo
+from entities import FunctionVersionInfo
 from config import Config
 from logger import logger
 from yc_runner import run_yc
