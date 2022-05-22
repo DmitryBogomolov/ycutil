@@ -1,4 +1,3 @@
-from sre_constants import ANY
 from typing import List, Any, cast
 from json import loads as load_json
 from function_info import FunctionVersionInfo
@@ -12,4 +11,3 @@ def list_function_versions(dir_path: str) -> List[FunctionVersionInfo]:
     out, _ = run_yc(['version', 'list', '--function-name', cfg.name, '--format', 'json'])
     data_items = cast(List[Any], load_json(out))
     return [FunctionVersionInfo.from_json(data_item) for data_item in data_items]
-
