@@ -8,6 +8,7 @@ from function_invoke import invoke_function
 from function_list import list_functions
 from function_logs import get_function_logs
 from function_url import is_url_invoke, set_url_invoke
+from function_version_list import list_function_versions
 
 def main() -> None:
     parser = argparse.ArgumentParser(
@@ -57,6 +58,12 @@ def main() -> None:
     url_invoke_parser.add_argument('target_dir', help='path to directory')
     url_invoke_parser.add_argument('--mode', choices=('on', 'off'), help='turn on or off')
 
+    list_function_versions_parser = subparsers.add_parser(
+        name='function-list-versions',
+        description='List function versions',
+    )
+    list_function_versions_parser.add_argument('target_dir', help='path to directory')
+
     args = parser.parse_args()
     command = args.command
     if not command:
@@ -75,6 +82,8 @@ def main() -> None:
         get_function_logs(args.target_dir)
     if command == 'function-list':
         list_functions()
+    if command == 'function-list-versions':
+        list_function_versions(args.target_dir)
     if command == 'function-url-invoke':
         if args.mode:
             set_url_invoke(args.target_dir, args.mode == 'on')
