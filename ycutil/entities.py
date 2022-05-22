@@ -1,6 +1,5 @@
 from typing import NamedTuple, Dict, Any
 from datetime import datetime
-from .helper import parse_date
 
 class FunctionInfo(NamedTuple):
     id: str
@@ -45,3 +44,6 @@ class FunctionVersionInfo(NamedTuple):
             memory = int(content['resources']['memory']) >> 20,
             timeout = int(content['execution_timeout'][:-1]),
         )
+
+def parse_date(date_str: str) -> datetime:
+    return datetime.strptime(date_str, '%Y-%m-%dT%H:%M:%S.%fZ')
