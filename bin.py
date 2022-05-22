@@ -55,8 +55,7 @@ def main() -> None:
         description='Manage function url invoke',
     )
     url_invoke_parser.add_argument('target_dir', help='path to directory')
-    url_invoke_parser.add_argument('--on', action='store_true', help='turn on')
-    url_invoke_parser.add_argument('--off', action='store_true', help='turn off')
+    url_invoke_parser.add_argument('--mode', choices=('on', 'off'), help='turn on or off')
 
     args = parser.parse_args()
     command = args.command
@@ -77,8 +76,8 @@ def main() -> None:
     if command == 'function-list':
         list_functions()
     if command == 'function-url-invoke':
-        if args.on or args.off:
-            set_url_invoke(args.target_dir, args.on)
+        if args.mode:
+            set_url_invoke(args.target_dir, args.mode == 'on')
         else:
             is_url_invoke(args.target_dir)
 
