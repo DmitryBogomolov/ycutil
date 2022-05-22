@@ -9,7 +9,7 @@ from .logger import logger
 from .yc_runner import run_yc
 
 def update_function(dir_path: str) -> FunctionVersionInfo:
-    logger.info('# update_function #')
+    logger.info('# update function #')
     cfg = Config.from_dir(dir_path)
     with TemporaryDirectory(dir=cfg.root_dir) as tmp_path:
         zip_path = path.join(tmp_path, cfg.name + '.zip')

@@ -1,4 +1,4 @@
-from typing import List, Any, cast
+from typing import List, Dict, Any, cast
 from json import loads as load_json
 from .entities import FunctionInfo
 from .config import Config
@@ -29,8 +29,8 @@ def list_functions() -> List[FunctionInfo]:
     data_items = cast(List[Any], load_json(out))
     return [FunctionInfo.from_json(data_item) for data_item in data_items]
 
-def get_function_logs(dir_path: str) -> str:
+def get_function_logs(dir_path: str) -> List[Dict[str, Any]]:
     logger.info('# get function logs #')
     cfg = Config.from_dir(dir_path)
     out, _ = run_yc('logs', '--name', cfg.name)
-    return out
+    return load_json(out)
