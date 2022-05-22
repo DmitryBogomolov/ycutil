@@ -1,3 +1,4 @@
+from typing import List, Any, cast
 from os import path, listdir
 from zipfile import ZipFile
 from tempfile import TemporaryDirectory
@@ -40,3 +41,10 @@ def call_yc(cfg: Config, zip_path: str) -> str:
         '--source-path', zip_path,
     )
     return out
+
+def list_function_versions(dir_path: str) -> List[FunctionVersionInfo]:
+    logger.info('# list function versions #')
+    cfg = Config.from_dir(dir_path)
+    out, _ = run_yc('version', 'list', '--function-name', cfg.name)
+    data_items = cast(List[Any], load_json(out))
+    return [FunctionVersionInfo.from_json(data_item) for data_item in data_items]
