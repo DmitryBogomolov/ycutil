@@ -1,6 +1,6 @@
 from typing import List, Tuple
 from subprocess import CalledProcessError, run, PIPE
-from logger import logger
+from .logger import logger
 
 def run_yc(args: List[str]) -> Tuple[str, str]:
     run_args = ['yc', 'serverless', 'function', *args]

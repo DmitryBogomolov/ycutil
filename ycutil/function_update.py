@@ -2,10 +2,10 @@ from os import path, listdir
 from zipfile import ZipFile
 from tempfile import TemporaryDirectory
 from json import loads as load_json
-from entities import FunctionVersionInfo
-from config import Config
-from logger import logger
-from yc_runner import run_yc
+from .entities import FunctionVersionInfo
+from .config import Config
+from .logger import logger
+from .yc_runner import run_yc
 
 def update_function(dir_path: str) -> FunctionVersionInfo:
     logger.info('# update_function #')

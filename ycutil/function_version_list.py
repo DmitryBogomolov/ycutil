@@ -1,9 +1,9 @@
 from typing import List, Any, cast
 from json import loads as load_json
-from entities import FunctionVersionInfo
-from config import Config
-from logger import logger
-from yc_runner import run_yc
+from .entities import FunctionVersionInfo
+from .config import Config
+from .logger import logger
+from .yc_runner import run_yc
 
 def list_function_versions(dir_path: str) -> List[FunctionVersionInfo]:
     logger.info('# list function versions #')

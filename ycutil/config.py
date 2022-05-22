@@ -1,7 +1,7 @@
 from typing import NamedTuple, Dict, Any, cast
 from os import path
 from json import load as load_json
-from logger import logger
+from .logger import logger
 
 CONFIG_NAME = '.ycconf'
 RUNTIMES = set(['python37', 'python38', 'python39'])

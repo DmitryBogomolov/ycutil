@@ -1,6 +1,6 @@
 from typing import NamedTuple, Dict, Any
 from datetime import datetime
-from helper import parse_date
+from .helper import parse_date
 
 class FunctionInfo(NamedTuple):
     id: str

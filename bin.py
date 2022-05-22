@@ -1,15 +1,15 @@
 #!/usr/bin/env python3
 
 import argparse
-from function_create import create_function
-from function_delete import delete_function
-from function_update import update_function
-from function_invoke import invoke_function
-from function_data import get_function_data
-from function_list import list_functions
-from function_logs import get_function_logs
-from function_url import is_url_invoke, set_url_invoke
-from function_version_list import list_function_versions
+from ycutil.function_create import create_function
+from ycutil.function_delete import delete_function
+from ycutil.function_update import update_function
+from ycutil.function_invoke import invoke_function
+from ycutil.function_data import get_function_data
+from ycutil.function_list import list_functions
+from ycutil.function_logs import get_function_logs
+from ycutil.function_url import is_url_invoke, set_url_invoke
+from ycutil.function_version_list import list_function_versions
 
 def main() -> None:
     parser = argparse.ArgumentParser(

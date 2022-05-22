@@ -1,8 +1,8 @@
 from typing import List, Any, cast
 from json import loads as load_json
-from entities import FunctionInfo
-from logger import logger
-from yc_runner import run_yc
+from .entities import FunctionInfo
+from .logger import logger
+from .yc_runner import run_yc
 
 def list_functions() -> List[FunctionInfo]:
     logger.info('# list functions #')

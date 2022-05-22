@@ -1,8 +1,8 @@
 from typing import Any
 from json import loads as load_json
-from config import Config
-from yc_runner import run_yc
-from logger import logger
+from .config import Config
+from .yc_runner import run_yc
+from .logger import logger
 
 def invoke_function(dir_path: str) -> Any:
     logger.info('# invoke function #')

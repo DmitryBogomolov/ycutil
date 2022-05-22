@@ -1,8 +1,8 @@
 from typing import List, Any, cast
 from json import loads as load_json
-from config import Config
-from logger import logger
-from yc_runner import run_yc
+from .config import Config
+from .logger import logger
+from .yc_runner import run_yc
 
 def is_url_invoke(dir_path: str) -> bool:
     logger.info('# is url invoke #')
