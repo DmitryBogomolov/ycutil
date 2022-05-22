@@ -4,8 +4,8 @@ from config import Config
 from logger import logger
 from yc_runner import run_yc
 
-def create_function(dir_path: str) -> FunctionInfo:
-    logger.info('# create_function #')
+def delete_function(dir_path: str) -> FunctionInfo:
+    logger.info('# delete function #')
     cfg = Config.from_dir(dir_path)
-    out, _ = run_yc(['create', '--name', cfg.name, '--no-user-output', '--format', 'json'])
+    out, _ = run_yc(['delete', '--name', cfg.name, '--no-user-output', '--format', 'json'])
     return FunctionInfo.from_json(load_json(out))

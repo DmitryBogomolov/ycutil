@@ -13,9 +13,9 @@ def run_yc(args: List[str]) -> Tuple[str, str]:
             logger.info('yc err: %s', proc.stderr)
         return (proc.stdout, proc.stderr)
     except CalledProcessError as err:
-        if proc.stdout:
-            logger.error('yc out: %s', proc.stdout)
-        if proc.stderr:
-            logger.error('yc err: %s', proc.stderr)
+        if err.stdout:
+            logger.error('yc out: %s', err.stdout)
+        if err.stderr:
+            logger.error('yc err: %s', err.stderr)
         message = err.stderr + err.stdout
         raise RuntimeError(message) from err
