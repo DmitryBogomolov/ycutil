@@ -1,14 +1,15 @@
+from typing import List, Any, cast
 from os import path, listdir
 from zipfile import ZipFile
 from tempfile import TemporaryDirectory
 from json import loads as load_json
-from entities import FunctionVersionInfo
-from config import Config
-from logger import logger
-from yc_runner import run_yc
+from .entities import FunctionVersionInfo
+from .config import Config
+from .logger import logger
+from .yc_runner import run_yc
 
 def update_function(dir_path: str) -> FunctionVersionInfo:
-    logger.info('# update_function #')
+    logger.info('# update function #')
     cfg = Config.from_dir(dir_path)
     with TemporaryDirectory(dir=cfg.root_dir) as tmp_path:
         zip_path = path.join(tmp_path, cfg.name + '.zip')
@@ -30,13 +31,20 @@ def walk_code(root_path: str, zip_file: ZipFile, dir_path: str) -> None:
             walk_code(root_path, zip_file, item_path)
 
 def call_yc(cfg: Config, zip_path: str) -> str:
-    out, _ = run_yc([
-        'version', 'create', '--no-user-output', '--format', 'json',
+    out, _ = run_yc(
+        'version', 'create',
         '--function-name', cfg.name,
         '--entrypoint', cfg.entrypoint,
         '--runtime', cfg.runtime,
         '--memory', f'{cfg.memory}m',
         '--execution-timeout', f'{cfg.timeout}s',
         '--source-path', zip_path,
-    ])
+    )
     return out
+
+def list_function_versions(dir_path: str) -> List[FunctionVersionInfo]:
+    logger.info('# list function versions #')
+    cfg = Config.from_dir(dir_path)
+    out, _ = run_yc('version', 'list', '--function-name', cfg.name)
+    data_items = cast(List[Any], load_json(out))
+    return [FunctionVersionInfo.from_json(data_item) for data_item in data_items]

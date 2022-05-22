@@ -1,15 +1,18 @@
 #!/usr/bin/env python3
 
 import argparse
-from function_create import create_function
-from function_delete import delete_function
-from function_update import update_function
-from function_invoke import invoke_function
-from function_data import get_function_data
-from function_list import list_functions
-from function_logs import get_function_logs
-from function_url import is_url_invoke, set_url_invoke
-from function_version_list import list_function_versions
+from ycutil import (
+    create_function,
+    delete_function,
+    update_function,
+    invoke_function,
+    get_function_info,
+    list_functions,
+    get_function_logs,
+    is_url_invoke,
+    set_url_invoke,
+    list_function_versions,
+)
 
 def main() -> None:
     parser = argparse.ArgumentParser(
@@ -41,11 +44,11 @@ def main() -> None:
     )
     invoke_function_parser.add_argument('target_dir', help='path to directory')
 
-    get_function_data_parser = subparsers.add_parser(
+    get_function_info_parser = subparsers.add_parser(
         name='function-info',
         description='Get function info',
     )
-    get_function_data_parser.add_argument('target_dir', help='path to directory')
+    get_function_info_parser.add_argument('target_dir', help='path to directory')
 
     get_function_logs_parser = subparsers.add_parser(
         name='function-logs',
@@ -86,7 +89,7 @@ def main() -> None:
     if command == 'function-invoke':
         invoke_function(args.target_dir)
     if command == 'function-info':
-        get_function_data(args.target_dir)
+        get_function_info(args.target_dir)
     if command == 'function-logs':
         get_function_logs(args.target_dir)
     if command == 'function-list':
