@@ -8,6 +8,6 @@ from .yc_runner import run_yc
 def list_function_versions(dir_path: str) -> List[FunctionVersionInfo]:
     logger.info('# list function versions #')
     cfg = Config.from_dir(dir_path)
-    out, _ = run_yc(['version', 'list', '--function-name', cfg.name])
+    out, _ = run_yc('version', 'list', '--function-name', cfg.name)
     data_items = cast(List[Any], load_json(out))
     return [FunctionVersionInfo.from_json(data_item) for data_item in data_items]

@@ -30,7 +30,7 @@ def walk_code(root_path: str, zip_file: ZipFile, dir_path: str) -> None:
             walk_code(root_path, zip_file, item_path)
 
 def call_yc(cfg: Config, zip_path: str) -> str:
-    out, _ = run_yc([
+    out, _ = run_yc(
         'version', 'create',
         '--function-name', cfg.name,
         '--entrypoint', cfg.entrypoint,
@@ -38,5 +38,5 @@ def call_yc(cfg: Config, zip_path: str) -> str:
         '--memory', f'{cfg.memory}m',
         '--execution-timeout', f'{cfg.timeout}s',
         '--source-path', zip_path,
-    ])
+    )
     return out
