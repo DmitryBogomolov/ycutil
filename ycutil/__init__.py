@@ -7,7 +7,7 @@ from .function_common import (
 )
 from .function_update import (
     update_function,
-    list_function_versions,
+    get_function_versions,
 )
 from .function_invoke import (
     invoke_function,

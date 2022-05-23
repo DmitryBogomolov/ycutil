@@ -11,7 +11,7 @@ from ycutil import (
     get_function_logs,
     is_url_invoke,
     set_url_invoke,
-    list_function_versions,
+    get_function_versions,
 )
 
 def main() -> None:
@@ -69,8 +69,8 @@ def main() -> None:
     url_invoke_parser.add_argument('--mode', choices=('on', 'off'), help='turn on or off')
 
     list_function_versions_parser = subparsers.add_parser(
-        name='function-list-versions',
-        description='List function versions',
+        name='function-versions',
+        description='Get function versions',
     )
     list_function_versions_parser.add_argument('target_dir', help='path to directory')
 
@@ -94,8 +94,8 @@ def main() -> None:
         get_function_logs(args.target_dir)
     if command == 'function-list':
         list_functions()
-    if command == 'function-list-versions':
-        list_function_versions(args.target_dir)
+    if command == 'function-versions':
+        get_function_versions(args.target_dir)
     if command == 'function-url-invoke':
         if args.mode:
             set_url_invoke(args.target_dir, args.mode == 'on')

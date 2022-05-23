@@ -42,8 +42,8 @@ def call_yc(cfg: Config, zip_path: str) -> str:
     )
     return out
 
-def list_function_versions(dir_path: str) -> List[FunctionVersionInfo]:
-    logger.info('# list function versions #')
+def get_function_versions(dir_path: str) -> List[FunctionVersionInfo]:
+    logger.info('# get function versions #')
     cfg = Config.from_dir(dir_path)
     out, _ = run_yc('version', 'list', '--function-name', cfg.name)
     data_items = cast(List[Any], load_json(out))
