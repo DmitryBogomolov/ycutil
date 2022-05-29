@@ -24,3 +24,4 @@ from .function_url import (
     is_url_invoke,
     set_url_invoke,
 )
+from .cli import run_cli
