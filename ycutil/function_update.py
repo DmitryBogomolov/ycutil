@@ -25,6 +25,7 @@ def update_function(dir_path: str) -> FunctionVersionInfo:
     return FunctionVersionInfo.from_json(cast(Dict[str, Any], out))
 
 def pack_code(zip_path: str, dir_path: str) -> None:
+    logger.info('collect files')
     with ZipFile(zip_path, mode='w') as zip_file:
         walk_code(dir_path, zip_file, dir_path)
     logger.info('archive: %s', zip_path)
