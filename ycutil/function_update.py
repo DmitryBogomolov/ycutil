@@ -8,6 +8,7 @@ from .logger import logger
 from .yc_runner import run_yc
 
 def update_function(cfg: Config) -> FunctionVersionInfo:
+    '''Update function'''
     with TemporaryDirectory(dir=cfg.root_dir) as tmp_path:
         zip_path = path.join(tmp_path, cfg.name + '.zip')
         pack_code(zip_path, cfg.root_dir)
@@ -37,6 +38,7 @@ def walk_code(root_path: str, zip_file: ZipFile, dir_path: str) -> None:
             walk_code(root_path, zip_file, item_path)
 
 def get_function_versions(cfg: Config) -> List[FunctionVersionInfo]:
+    '''Get function versions'''
     out = run_yc('version', 'list', '--function-name', cfg.name)
     data_items = cast(List[Any], out)
     return [FunctionVersionInfo.from_json(data_item) for data_item in data_items]

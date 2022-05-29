@@ -2,6 +2,7 @@ from .config import Config
 from .yc_runner import run_yc
 
 def is_url_invoke(cfg: Config) -> bool:
+    '''Get url invokation status'''
     out = run_yc('list-access-bindings', '--name', cfg.name)
     return TARGET_BINDING in out
 
@@ -14,5 +15,6 @@ TARGET_BINDING = {
 }
 
 def set_url_invoke(cfg: Config, state: bool) -> None:
+    '''Set url invokation status'''
     action = ('allow' if state else 'deny') + '-unauthenticated-invoke'
     run_yc(action, '--name', cfg.name)
