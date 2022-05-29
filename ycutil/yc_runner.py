@@ -1,21 +1,18 @@
-from typing import List, Tuple
+from typing import Any
+from json import loads as load_json
 from subprocess import CalledProcessError, run, PIPE
 from .logger import logger
 
-def run_yc(*args: str) -> Tuple[str, str]:
+def run_yc(*args: str) -> Any:
     run_args = ['yc', 'serverless', 'function', *args, '--no-user-output', '--format', 'json']
-    logger.info('yc:call: %s', ' '.join(run_args[2:]))
+    logger.info('yc.run')
+    logger.info(run_args[2:])
     try:
         proc = run(run_args, check=True, encoding='utf8', stdout=PIPE, stderr=PIPE)
-        if proc.stdout:
-            logger.info('yc:out: %s', proc.stdout)
-        if proc.stderr:
-            logger.info('yc:err: %s', proc.stderr)
-        return (proc.stdout, proc.stderr)
+        logger.info('yc.out')
+        logger.info(proc.stdout + proc.stderr)
+        return load_json(proc.stdout)
     except CalledProcessError as err:
-        if err.stdout:
-            logger.error('yc:out: %s', err.stdout)
-        if err.stderr:
-            logger.error('yc:err: %s', err.stderr)
-        message = err.stderr + err.stdout
-        raise RuntimeError(message) from err
+        logger.error('yc.err')
+        logger.error(err.stderr + err.stdout)
+        raise RuntimeError(err.stderr) from err
