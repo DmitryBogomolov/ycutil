@@ -45,5 +45,22 @@ class FunctionVersionInfo(NamedTuple):
             timeout = int(content['execution_timeout'][:-1]),
         )
 
+class FunctionLogEntry(NamedTuple):
+    uid: str
+    timestamp: datetime
+    level: str
+    message: str
+    payload: Any
+
+    @classmethod
+    def from_json(cls, content: Dict[str, Any]) -> 'FunctionLogEntry':
+        return cls(
+            uid = content['uid'],
+            timestamp = parse_date(content['timestamp']),
+            level = content['level'],
+            message = content['message'],
+            payload = content['json_payload'],
+        )
+
 def parse_date(date_str: str) -> datetime:
     return datetime.strptime(date_str, '%Y-%m-%dT%H:%M:%S.%fZ')

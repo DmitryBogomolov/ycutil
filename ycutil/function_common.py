@@ -1,5 +1,5 @@
-from typing import List, Any
-from .entities import FunctionInfo
+from typing import List
+from .entities import FunctionInfo, FunctionLogEntry
 from .config import Config
 from .logger import logger
 from .yc_runner import run_yc
@@ -27,7 +27,8 @@ def list_functions() -> List[FunctionInfo]:
     out = run_yc('list')
     return [*map(FunctionInfo.from_json, out)]
 
-def get_function_logs(dir_path: str) -> List[Any]:
+def get_function_logs(dir_path: str) -> List[FunctionLogEntry]:
     logger.info('# get function logs #')
     cfg = Config.from_dir(dir_path)
-    return run_yc('logs', '--name', cfg.name)
+    out = run_yc('logs', '--name', cfg.name)
+    return [*map(FunctionLogEntry.from_json, out)]
