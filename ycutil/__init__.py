@@ -1,3 +1,11 @@
+from .config import (
+    Config,
+)
+from .entities import (
+    FunctionInfo,
+    FunctionVersionInfo,
+    FunctionLogEntry,
+)
 from .function_common import (
     create_function,
     delete_function,

@@ -2,6 +2,7 @@
 
 import argparse
 from ycutil import (
+    Config,
     create_function,
     delete_function,
     update_function,
@@ -81,26 +82,26 @@ def main() -> None:
         return
 
     if command == 'function-create':
-        create_function(args.target_dir)
+        create_function(Config.from_dir(args.target_dir))
     if command == 'function-delete':
-        delete_function(args.target_dir)
+        delete_function(Config.from_dir(args.target_dir))
     if command == 'function-update':
-        update_function(args.target_dir)
+        update_function(Config.from_dir(args.target_dir))
     if command == 'function-invoke':
-        invoke_function(args.target_dir)
+        invoke_function(Config.from_dir(args.target_dir))
     if command == 'function-info':
-        get_function_info(args.target_dir)
+        get_function_info(Config.from_dir(args.target_dir))
     if command == 'function-logs':
-        get_function_logs(args.target_dir)
+        get_function_logs(Config.from_dir(args.target_dir))
     if command == 'function-list':
         list_functions()
     if command == 'function-versions':
-        get_function_versions(args.target_dir)
+        get_function_versions(Config.from_dir(args.target_dir))
     if command == 'function-url-invoke':
         if args.mode:
-            set_url_invoke(args.target_dir, args.mode == 'on')
+            set_url_invoke(Config.from_dir(args.target_dir), args.mode == 'on')
         else:
-            is_url_invoke(args.target_dir)
+            is_url_invoke(Config.from_dir(args.target_dir))
 
 
 if __name__ == '__main__':
