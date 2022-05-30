@@ -10,9 +10,15 @@ def run_yc(*args: str) -> Any:
     try:
         proc = run(run_args, check=True, encoding='utf8', stdout=PIPE, stderr=PIPE)
         logger.info('yc.out')
-        logger.info(proc.stdout + proc.stderr)
-        return load_json(proc.stdout)
+        if proc.stdout:
+            logger.info(proc.stdout)
+        if proc.stderr:
+            logger.info(proc.stderr)
+        return load_json(proc.stdout) if proc.stdout else None
     except CalledProcessError as err:
         logger.error('yc.err')
-        logger.error(err.stderr + err.stdout)
+        if err.stdout:
+            logger.error(err.stdout)
+        if err.stderr:
+            logger.error(err.stderr)
         raise RuntimeError(err.stderr) from err

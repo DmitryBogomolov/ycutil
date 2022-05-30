@@ -1,6 +1,7 @@
-from typing import Callable, cast
+from typing import Any, Dict, Callable
 from os import getcwd
-from argparse import ArgumentParser
+from argparse import ArgumentParser, Namespace
+from inspect import Signature, getdoc, signature
 from .config import Config
 from .function_common import (
     create_function,
@@ -34,23 +35,44 @@ command_descriptors = [
     ('function-set-url-invoke', set_url_invoke),
 ]
 
+Wrapper = Callable[[Namespace], None]
+
+def make_wrapper(func: Any, func_signature: Signature) -> Wrapper:
+    def wrapper(parse_args: Namespace) -> None:
+        func_args = {}
+        for param_name, param_info in func_signature.parameters.items():
+            if param_info.annotation == Config:
+                func_args[param_name] = Config.from_dir(getattr(parse_args, 'target_dir'))
+            else:
+                func_args[param_name] = getattr(parse_args, param_name)
+        func_ret = func(**func_args)
+        print(func_ret)
+
+    return wrapper
+
 def run_cli() -> None:
     parser = ArgumentParser(
         description='Yandex Cloud functions wrapper'
     )
-    parser.add_argument('--target-dir', default=getcwd(), help='path to directory')
     subparsers = parser.add_subparsers(dest='command')
-
-    cmd_to_func = {}
+    cmd_to_func: Dict[str, Wrapper] = {}
 
     for name, func in command_descriptors:
-        subparsers.add_parser(
+        subparser = subparsers.add_parser(
             name=name,
-            description=func.__doc__,
+            description=getdoc(func),
         )
-        cmd_to_func[name] = func
+        func_signature = signature(func)    # type: ignore
+        for param_name, param_info in func_signature.parameters.items():
+            if param_info.annotation == Config:
+                subparser.add_argument('--target-dir', type=str, default=getcwd(), help='path to directory')
+            else:
+                subparser.add_argument('--' + param_name, type=param_info.annotation, required=True)
+
+        cmd_to_func[name] = make_wrapper(func, func_signature)
 
     args = parser.parse_args()
-    func = cast(Callable[[Config], None], cmd_to_func.get(args.command))
-    cfg = Config.from_dir(args.target_dir)
-    func(cfg)   # type: ignore
+    if not args.command:
+        parser.print_help()
+        return
+    cmd_to_func[args.command](args)
