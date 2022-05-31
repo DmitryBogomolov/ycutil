@@ -2,6 +2,8 @@ from typing import NamedTuple, Dict, Any
 from datetime import datetime
 from collections import OrderedDict
 
+RawInfo = Dict[str, Any]
+
 class FunctionInfo(NamedTuple):
     id: str
     name: str
@@ -10,7 +12,7 @@ class FunctionInfo(NamedTuple):
     invoke_url: str
     log_group_id: str
 
-    def to_json(self) -> OrderedDict:
+    def to_dict(self) -> RawInfo:
         return OrderedDict(
             id=self.id,
             name=self.name,
@@ -21,7 +23,7 @@ class FunctionInfo(NamedTuple):
         )
 
     @classmethod
-    def from_json(cls, content: Dict[str, Any]) -> 'FunctionInfo':
+    def from_dict(cls, content: RawInfo) -> 'FunctionInfo':
         return cls(
             id = content['id'],
             name = content['name'],
@@ -42,7 +44,7 @@ class FunctionVersionInfo(NamedTuple):
     memory: int
     timeout: int
 
-    def to_json(self) -> OrderedDict:
+    def to_dict(self) -> RawInfo:
         return OrderedDict(
             id=self.id,
             function_id=self.function_id,
@@ -56,7 +58,7 @@ class FunctionVersionInfo(NamedTuple):
         )
 
     @classmethod
-    def from_json(cls, content: Dict[str, Any]) -> 'FunctionVersionInfo':
+    def from_dict(cls, content: RawInfo) -> 'FunctionVersionInfo':
         return cls(
             id = content['id'],
             function_id = content['function_id'],
@@ -76,7 +78,7 @@ class FunctionLogEntry(NamedTuple):
     message: str
     payload: Any
 
-    def to_json(self) -> OrderedDict:
+    def to_dict(self) -> RawInfo:
         return OrderedDict(
             uid=self.uid,
             timestamp=stringify_date(self.timestamp),
@@ -86,7 +88,7 @@ class FunctionLogEntry(NamedTuple):
         )
 
     @classmethod
-    def from_json(cls, content: Dict[str, Any]) -> 'FunctionLogEntry':
+    def from_dict(cls, content: RawInfo) -> 'FunctionLogEntry':
         return cls(
             uid = content['uid'],
             timestamp = parse_date(content['timestamp']),
