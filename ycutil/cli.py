@@ -1,7 +1,8 @@
-from typing import Any, Dict, Callable
+from typing import Any, Dict, List, Tuple, Callable
 from os import getcwd
 from argparse import ArgumentParser, Namespace
 from inspect import Signature, getdoc, signature
+from json import dumps as dump_json
 from .config import Config
 from .function_common import (
     create_function,
@@ -22,7 +23,9 @@ from .function_url import (
     set_url_invoke,
 )
 
-command_descriptors = [
+CommandFunc = Callable[..., Any]
+
+command_descriptors: List[Tuple[str, CommandFunc]] = [
     ('function-create', create_function),
     ('function-delete', delete_function),
     ('function-list', list_functions),
@@ -37,7 +40,7 @@ command_descriptors = [
 
 Wrapper = Callable[[Namespace], None]
 
-def make_wrapper(func: Any, func_signature: Signature) -> Wrapper:
+def make_wrapper(func: CommandFunc, func_signature: Signature) -> Wrapper:
     def wrapper(parse_args: Namespace) -> None:
         func_args = {}
         for param_name, param_info in func_signature.parameters.items():
@@ -46,6 +49,9 @@ def make_wrapper(func: Any, func_signature: Signature) -> Wrapper:
             else:
                 func_args[param_name] = getattr(parse_args, param_name)
         func_ret = func(**func_args)
+        if func_ret and hasattr(func_ret, 'to_dict'):
+            data = getattr(func_ret, 'to_dict')()
+            func_ret = dump_json(data, indent=2)
         print(func_ret)
 
     return wrapper
@@ -62,7 +68,7 @@ def run_cli() -> None:
             name=name,
             description=getdoc(func),
         )
-        func_signature = signature(func)    # type: ignore
+        func_signature = signature(func)
         for param_name, param_info in func_signature.parameters.items():
             if param_info.annotation == Config:
                 subparser.add_argument('--target-dir', type=str, default=getcwd(), help='path to directory')
