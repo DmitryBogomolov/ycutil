@@ -40,6 +40,25 @@ command_descriptors: List[Tuple[str, CommandFunc]] = [
 
 Wrapper = Callable[[Namespace], None]
 
+def prettify_result(value: Any) -> Any:
+    if not value:
+        return value
+    need_dump = False
+    if hasattr(value, 'dump'):
+        need_dump = True
+        value = getattr(value, 'dump')()
+    if isinstance(value, list):
+        tmp = []
+        for item in value:
+            if hasattr(item, 'dump'):
+                need_dump = True
+                item = getattr(item, 'dump')()
+            tmp.append(item)
+        value = tmp
+    if need_dump:
+        return dump_json(value, indent=2)
+    return value
+
 def make_wrapper(func: CommandFunc, func_signature: Signature) -> Wrapper:
     def wrapper(parse_args: Namespace) -> None:
         func_args = {}
@@ -49,9 +68,7 @@ def make_wrapper(func: CommandFunc, func_signature: Signature) -> Wrapper:
             else:
                 func_args[param_name] = getattr(parse_args, param_name)
         func_ret = func(**func_args)
-        if func_ret and hasattr(func_ret, 'to_dict'):
-            data = getattr(func_ret, 'to_dict')()
-            func_ret = dump_json(data, indent=2)
+        func_ret = prettify_result(func_ret)
         print(func_ret)
 
     return wrapper
