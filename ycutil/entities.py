@@ -12,7 +12,7 @@ class FunctionInfo(NamedTuple):
     invoke_url: str
     log_group_id: str
 
-    def to_dict(self) -> RawInfo:
+    def dump(self) -> RawInfo:
         return OrderedDict(
             id=self.id,
             name=self.name,
@@ -23,7 +23,7 @@ class FunctionInfo(NamedTuple):
         )
 
     @classmethod
-    def from_dict(cls, content: RawInfo) -> 'FunctionInfo':
+    def parse(cls, content: RawInfo) -> 'FunctionInfo':
         return cls(
             id = content['id'],
             name = content['name'],
@@ -44,7 +44,7 @@ class FunctionVersionInfo(NamedTuple):
     memory: int
     timeout: int
 
-    def to_dict(self) -> RawInfo:
+    def dump(self) -> RawInfo:
         return OrderedDict(
             id=self.id,
             function_id=self.function_id,
@@ -58,7 +58,7 @@ class FunctionVersionInfo(NamedTuple):
         )
 
     @classmethod
-    def from_dict(cls, content: RawInfo) -> 'FunctionVersionInfo':
+    def parse(cls, content: RawInfo) -> 'FunctionVersionInfo':
         return cls(
             id = content['id'],
             function_id = content['function_id'],
@@ -78,7 +78,7 @@ class FunctionLogEntry(NamedTuple):
     message: str
     payload: Any
 
-    def to_dict(self) -> RawInfo:
+    def dump(self) -> RawInfo:
         return OrderedDict(
             uid=self.uid,
             timestamp=stringify_date(self.timestamp),
@@ -88,7 +88,7 @@ class FunctionLogEntry(NamedTuple):
         )
 
     @classmethod
-    def from_dict(cls, content: RawInfo) -> 'FunctionLogEntry':
+    def parse(cls, content: RawInfo) -> 'FunctionLogEntry':
         return cls(
             uid = content['uid'],
             timestamp = parse_date(content['timestamp']),

@@ -21,7 +21,7 @@ def update_function(cfg: Config) -> FunctionVersionInfo:
             '--execution-timeout', f'{cfg.timeout}s',
             '--source-path', zip_path,
         )
-    return FunctionVersionInfo.from_dict(cast(Dict[str, Any], out))
+    return FunctionVersionInfo.parse(cast(Dict[str, Any], out))
 
 def pack_code(zip_path: str, dir_path: str) -> None:
     logger.info('collect files')
@@ -40,5 +40,4 @@ def walk_code(root_path: str, zip_file: ZipFile, dir_path: str) -> None:
 def get_function_versions(cfg: Config) -> List[FunctionVersionInfo]:
     '''Get function versions'''
     out = run_yc('version', 'list', '--function-name', cfg.name)
-    data_items = cast(List[Any], out)
-    return [FunctionVersionInfo.from_dict(data_item) for data_item in data_items]
+    return [*map(FunctionVersionInfo.parse, out)]
