@@ -1,4 +1,4 @@
-from typing import Dict, List, Any, cast
+from typing import List
 from os import path, listdir
 from zipfile import ZipFile
 from tempfile import TemporaryDirectory
@@ -21,7 +21,7 @@ def update_function(cfg: Config) -> FunctionVersionInfo:
             '--execution-timeout', f'{cfg.timeout}s',
             '--source-path', zip_path,
         )
-    return FunctionVersionInfo.parse(cast(Dict[str, Any], out))
+    return FunctionVersionInfo.parse(out)
 
 def pack_code(zip_path: str, dir_path: str) -> None:
     logger.info('collect files')
