@@ -1,5 +1,5 @@
 from typing import Any, Dict, List, Tuple, Callable
-from os import getcwd
+from os import getcwd, path
 from argparse import ArgumentParser, Namespace
 from inspect import Signature, getdoc, signature
 from json import dumps as dump_json
@@ -22,6 +22,7 @@ from .function_url import (
     is_url_invoke,
     set_url_invoke,
 )
+from .logger import set_file_log
 
 CommandFunc = Callable[..., Any]
 
@@ -62,11 +63,15 @@ def prettify_result(value: Any) -> Any:
 def make_wrapper(func: CommandFunc, func_signature: Signature) -> Wrapper:
     def wrapper(parse_args: Namespace) -> None:
         func_args = {}
+        target_dir = None
         for param_name, param_info in func_signature.parameters.items():
             if param_info.annotation == Config:
-                func_args[param_name] = Config.from_dir(getattr(parse_args, 'target_dir'))
+                target_dir = getattr(parse_args, 'target_dir')
+                func_args[param_name] = Config.from_dir(target_dir)
             else:
                 func_args[param_name] = getattr(parse_args, param_name)
+        target_dir = target_dir or getcwd()
+        set_file_log(path.join(target_dir, '.yclog'))
         func_ret = func(**func_args)
         func_ret = prettify_result(func_ret)
         print(func_ret)
