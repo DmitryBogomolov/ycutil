@@ -6,7 +6,7 @@ from .logger import logger
 def run_yc(*args: str) -> Any:
     run_args = ['yc', 'serverless', 'function', *args, '--no-user-output', '--format', 'json']
     logger.info('yc.run')
-    logger.info(run_args[2:])
+    logger.info(' '.join(run_args[2:]))
     try:
         proc = run(run_args, check=True, encoding='utf8', stdout=PIPE, stderr=PIPE)
         logger.info('yc.out')
