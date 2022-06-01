@@ -1,3 +1,11 @@
+from .config import (
+    Config,
+)
+from .entities import (
+    FunctionInfo,
+    FunctionVersionInfo,
+    FunctionLogEntry,
+)
 from .function_common import (
     create_function,
     delete_function,
@@ -7,7 +15,7 @@ from .function_common import (
 )
 from .function_update import (
     update_function,
-    list_function_versions,
+    get_function_versions,
 )
 from .function_invoke import (
     invoke_function,
@@ -16,3 +24,4 @@ from .function_url import (
     is_url_invoke,
     set_url_invoke,
 )
+from .cli import run_cli
