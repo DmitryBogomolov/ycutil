@@ -95,7 +95,7 @@ def run_cli() -> None:
             if param_info.annotation == Config:
                 subparser.add_argument('--target-dir', type=str, default=getcwd(), help='path to directory')
             else:
-                subparser.add_argument('--' + param_name, type=param_info.annotation, required=True)
+                subparser.add_argument('--' + param_name, required=True)
 
         cmd_to_func[name] = make_wrapper(func, func_signature)
 
