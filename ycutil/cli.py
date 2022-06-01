@@ -17,6 +17,7 @@ from .function_update import (
 )
 from .function_invoke import (
     invoke_function,
+    invoke_function_url,
 )
 from .function_url import (
     is_url_invoke,
@@ -35,6 +36,7 @@ command_descriptors: List[Tuple[str, CommandFunc]] = [
     ('function-update', update_function),
     ('function-versions', get_function_versions),
     ('function-invoke', invoke_function),
+    ('function-invoke-url', invoke_function_url),
     ('function-is-url-invoke', is_url_invoke),
     ('function-set-url-invoke', set_url_invoke),
 ]
