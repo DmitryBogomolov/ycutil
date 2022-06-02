@@ -92,7 +92,7 @@ class FunctionLogEntry(NamedTuple):
         return cls(
             uid = content['uid'],
             timestamp = parse_date(content['timestamp']),
-            level = content['level'],
+            level = content.get('level', ''),
             message = content['message'],
             payload = content['json_payload'],
         )
