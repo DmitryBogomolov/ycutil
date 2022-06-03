@@ -1,7 +1,7 @@
 from typing import Any, Dict, List, Tuple, Callable
 from os import getcwd, path
-from argparse import ArgumentParser, Namespace
-from inspect import Signature, getdoc, signature
+from argparse import ArgumentParser
+from inspect import getdoc, getfullargspec
 from json import dumps as dump_json
 from .config import Config
 from .function_common import (
@@ -41,7 +41,7 @@ command_descriptors: List[Tuple[str, CommandFunc]] = [
     ('function-set-url-invoke', set_url_invoke),
 ]
 
-Wrapper = Callable[[Namespace], None]
+Wrapper = Callable[[Dict[str, Any]], None]
 
 def prettify_result(value: Any) -> Any:
     if not value:
@@ -62,19 +62,14 @@ def prettify_result(value: Any) -> Any:
         return dump_json(value, indent=2)
     return value
 
-def make_wrapper(func: CommandFunc, func_signature: Signature) -> Wrapper:
-    def wrapper(parse_args: Namespace) -> None:
-        func_args = {}
-        target_dir = None
-        for param_name, param_info in func_signature.parameters.items():
-            if param_info.annotation == Config:
-                target_dir = getattr(parse_args, 'target_dir')
-                func_args[param_name] = Config.from_dir(target_dir)
-            else:
-                func_args[param_name] = getattr(parse_args, param_name)
-        target_dir = target_dir or getcwd()
+def make_wrapper(func: CommandFunc, config_arg: str) -> Wrapper:
+    def wrapper(parse_args: Dict[str, Any]) -> None:
+        target_dir = getcwd()
+        if config_arg:
+            target_dir = parse_args.pop('target_dir')
+            parse_args[config_arg] = Config.from_dir(target_dir)
         set_file_log(path.join(target_dir, '.yclog'))
-        func_ret = func(**func_args)
+        func_ret = func(**parse_args)
         func_ret = prettify_result(func_ret)
         print(func_ret)
 
@@ -92,17 +87,25 @@ def run_cli() -> None:
             name=name,
             description=getdoc(func),
         )
-        func_signature = signature(func)
-        for param_name, param_info in func_signature.parameters.items():
-            if param_info.annotation == Config:
-                subparser.add_argument('--target-dir', type=str, default=getcwd(), help='path to directory')
+        func_spec = getfullargspec(func)
+        func_args = func_spec.args
+        func_defaults = func_spec.defaults or tuple()
+        first_default_idx = len(func_args) - len(func_defaults)
+        has_config = len(func_args) > 0 and func_spec.annotations[func_args[0]] == Config
+        if has_config:
+            subparser.add_argument('--target-dir', type=str, default=getcwd(), help='path to directory')
+        for arg_idx in range(int(has_config), len(func_args)):
+            arg_name = func_args[arg_idx]
+            if arg_idx < first_default_idx:
+                subparser.add_argument('--' + arg_name, required=True)
             else:
-                subparser.add_argument('--' + param_name, required=True)
+                subparser.add_argument('--' + arg_name, default=func_defaults[arg_idx - first_default_idx])
 
-        cmd_to_func[name] = make_wrapper(func, func_signature)
+        cmd_to_func[name] = make_wrapper(func, func_spec.args[0] if has_config else '')
 
-    args = parser.parse_args()
-    if not args.command:
+    args = vars(parser.parse_args())
+    cmd = args.pop('command')
+    if not cmd:
         parser.print_help()
         return
-    cmd_to_func[args.command](args)
+    cmd_to_func[cmd](args)
