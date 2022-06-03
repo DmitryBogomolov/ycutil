@@ -11,6 +11,8 @@ from .function_common import (
     delete_function,
     list_functions,
     get_function_info,
+)
+from .function_logs import (
     get_function_logs,
 )
 from .function_update import (

@@ -8,8 +8,10 @@ from .function_common import (
     create_function,
     delete_function,
     get_function_info,
-    get_function_logs,
     list_functions,
+)
+from .function_logs import (
+    get_function_logs,
 )
 from .function_update import (
     update_function,
