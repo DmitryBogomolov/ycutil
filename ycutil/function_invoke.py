@@ -4,6 +4,13 @@ from json import dumps as dump_json
 from .config import Config
 from .yc_runner import run_yc
 
+# Cloud function will try to guess type when data is provided in "event".
+# true,false -> bool
+# 1 -> int
+# 1.2 -> float
+# 'test' -> str
+# [1, 'a'] -> list
+# {'a': 1} -> dict
 def pack_data(data: Any) -> str:
     if isinstance(data, str):
         return data
