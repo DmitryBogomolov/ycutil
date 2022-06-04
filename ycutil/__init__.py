@@ -1,21 +1,19 @@
 from .config import (
     Config,
 )
-from .entities import (
-    FunctionInfo,
-    FunctionVersionInfo,
-    FunctionLogEntry,
-)
 from .function_common import (
+    FunctionInfo,
     create_function,
     delete_function,
     list_functions,
     get_function_info,
 )
 from .function_logs import (
+    FunctionLog,
     get_function_logs,
 )
 from .function_update import (
+    FunctionVersionInfo,
     update_function,
     get_function_versions,
 )

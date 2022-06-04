@@ -2,8 +2,8 @@ from typing import NamedTuple, List, Dict, Any, cast
 from datetime import datetime
 from collections import OrderedDict
 from itertools import groupby
-from .entities import RawInfo, parse_date, stringify_date
 from .config import Config
+from .util import RawInfo, parse_date, stringify_date
 from .yc_runner import run_yc
 
 class FunctionLog(NamedTuple):
