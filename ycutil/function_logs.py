@@ -1,9 +1,8 @@
 from typing import NamedTuple, List, Dict, Any, cast
 from datetime import datetime
-from collections import OrderedDict
 from itertools import groupby
 from .config import Config
-from .util import RawInfo, parse_date, stringify_date
+from .util import RawInfo, parse_date, dump_named_tuple
 from .yc_runner import run_yc
 
 class FunctionLog(NamedTuple):
@@ -19,12 +18,7 @@ class FunctionLog(NamedTuple):
     function_init_duration: float = 0
 
     def dump(self) -> RawInfo:
-        obj = OrderedDict()
-        for name in self.__class__._fields:
-            obj[name] = getattr(self, name)
-        obj['start_time'] = stringify_date(obj['start_time'])
-        obj['end_time'] = stringify_date(obj['end_time'])
-        return obj
+        return dump_named_tuple(self)
 
 def get_request_id(log_entry: Any) -> str:
     return log_entry['json_payload']['request_id']

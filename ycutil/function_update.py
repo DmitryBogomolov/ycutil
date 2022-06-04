@@ -1,12 +1,11 @@
 from typing import List, NamedTuple
 from os import path, listdir
-from collections import OrderedDict
 from datetime import datetime
 from zipfile import ZipFile
 from tempfile import TemporaryDirectory
 from .config import Config
 from .logger import logger
-from .util import RawInfo, stringify_date, parse_date
+from .util import RawInfo, parse_date, dump_named_tuple
 from .yc_runner import run_yc
 
 class FunctionVersionInfo(NamedTuple):
@@ -21,17 +20,7 @@ class FunctionVersionInfo(NamedTuple):
     timeout: int
 
     def dump(self) -> RawInfo:
-        return OrderedDict(
-            id=self.id,
-            function_id=self.function_id,
-            created_at=stringify_date(self.created_at),
-            status=self.status,
-            log_group_id=self.log_group_id,
-            entrypoint=self.entrypoint,
-            runtime=self.runtime,
-            memory=self.memory,
-            timeout=self.timeout,
-        )
+        return dump_named_tuple(self)
 
     @classmethod
     def parse(cls, content: RawInfo) -> 'FunctionVersionInfo':

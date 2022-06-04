@@ -1,8 +1,8 @@
+import re
 from typing import NamedTuple, List
 from datetime import datetime
-from collections import OrderedDict
 from .config import Config
-from .util import RawInfo, parse_date, stringify_date
+from .util import RawInfo, parse_date, dump_named_tuple
 from .yc_runner import run_yc
 
 class FunctionInfo(NamedTuple):
@@ -10,18 +10,11 @@ class FunctionInfo(NamedTuple):
     name: str
     created_at: datetime
     status: str
-    invoke_url: str
+    http_invoke_url: str
     log_group_id: str
 
     def dump(self) -> RawInfo:
-        return OrderedDict(
-            id=self.id,
-            name=self.name,
-            created_at=stringify_date(self.created_at),
-            status=self.status,
-            invoke_url=self.invoke_url,
-            log_group_id=self.log_group_id,
-        )
+        return dump_named_tuple(self)
 
     @classmethod
     def parse(cls, content: RawInfo) -> 'FunctionInfo':
@@ -30,7 +23,7 @@ class FunctionInfo(NamedTuple):
             name = content['name'],
             created_at = parse_date(content['created_at']),
             status = content['status'],
-            invoke_url = content['http_invoke_url'],
+            http_invoke_url = content['http_invoke_url'],
             log_group_id = content['log_group_id'],
         )
 
