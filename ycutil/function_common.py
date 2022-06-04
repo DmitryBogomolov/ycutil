@@ -18,14 +18,12 @@ class FunctionInfo(NamedTuple):
 
     @classmethod
     def parse(cls, content: RawInfo) -> 'FunctionInfo':
-        return cls(
-            id = content['id'],
-            name = content['name'],
-            created_at = parse_date(content['created_at']),
-            status = content['status'],
-            http_invoke_url = content['http_invoke_url'],
-            log_group_id = content['log_group_id'],
-        )
+        args = {}
+        for name in cls._fields:
+            args[name] = content[name]
+            if cls._field_types[name] == datetime:
+                args[name] = parse_date(args[name])
+        return cls(**args)
 
 def create_function(cfg: Config) -> FunctionInfo:
     '''Create function'''

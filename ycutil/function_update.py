@@ -24,18 +24,13 @@ class FunctionVersionInfo(NamedTuple):
 
     @classmethod
     def parse(cls, content: RawInfo) -> 'FunctionVersionInfo':
-        return cls(
-            id = content['id'],
-            function_id = content['function_id'],
-            created_at = parse_date(content['created_at']),
-            log_group_id = content['log_group_id'],
-            status = content['status'],
-            entrypoint = content['entrypoint'],
-            runtime = content['runtime'],
-            memory = int(content['resources']['memory']) >> 20,
-            timeout = int(content['execution_timeout'][:-1]),
-        )
-
+        args = {}
+        for name in ('id', 'function_id', 'log_group_id', 'status', 'entrypoint', 'runtime'):
+            args[name] = content[name]
+        args['created_at'] = parse_date(content['created_at'])
+        args['memory'] = int(content['resources']['memory']) >> 20
+        args['timeout'] = int(content['execution_timeout'][:-1])
+        return cls(**args)
 
 def update_function(cfg: Config) -> FunctionVersionInfo:
     '''Update function'''
