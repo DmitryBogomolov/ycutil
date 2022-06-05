@@ -4,24 +4,24 @@ from argparse import ArgumentParser
 from inspect import getdoc, getfullargspec
 from json import dumps as dump_json
 from .config import Config
-from .function_common import (
+from .common import (
     create_function,
     delete_function,
     get_function_info,
     list_functions,
 )
-from .function_logs import (
+from .logs import (
     get_function_logs,
 )
-from .function_update import (
+from .update import (
     update_function,
     get_function_versions,
 )
-from .function_invoke import (
+from .invoke import (
     invoke_function,
     invoke_function_url,
 )
-from .function_url import (
+from .url import (
     is_url_invoke,
     set_url_invoke,
 )

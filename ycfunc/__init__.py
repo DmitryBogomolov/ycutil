@@ -1,26 +1,26 @@
 from .config import (
     Config,
 )
-from .function_common import (
+from .common import (
     FunctionInfo,
     create_function,
     delete_function,
     list_functions,
     get_function_info,
 )
-from .function_logs import (
+from .logs import (
     FunctionLog,
     get_function_logs,
 )
-from .function_update import (
+from .update import (
     FunctionVersionInfo,
     update_function,
     get_function_versions,
 )
-from .function_invoke import (
+from .invoke import (
     invoke_function,
 )
-from .function_url import (
+from .url import (
     is_url_invoke,
     set_url_invoke,
 )
