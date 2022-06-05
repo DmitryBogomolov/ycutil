@@ -1,11 +1,36 @@
-from typing import List
+from typing import List, NamedTuple
 from os import path, listdir
+from datetime import datetime
 from zipfile import ZipFile
 from tempfile import TemporaryDirectory
-from .entities import FunctionVersionInfo
 from .config import Config
 from .logger import logger
+from .util import RawInfo, parse_date, dump_named_tuple
 from .yc_runner import run_yc
+
+class FunctionVersionInfo(NamedTuple):
+    id: str
+    function_id: str
+    created_at: datetime
+    status: str
+    log_group_id: str
+    entrypoint: str
+    runtime: str
+    memory: int
+    timeout: int
+
+    def dump(self) -> RawInfo:
+        return dump_named_tuple(self)
+
+    @classmethod
+    def parse(cls, content: RawInfo) -> 'FunctionVersionInfo':
+        args = {}
+        for name in ('id', 'function_id', 'log_group_id', 'status', 'entrypoint', 'runtime'):
+            args[name] = content[name]
+        args['created_at'] = parse_date(content['created_at'])
+        args['memory'] = int(content['resources']['memory']) >> 20
+        args['timeout'] = int(content['execution_timeout'][:-1])
+        return cls(**args)
 
 def update_function(cfg: Config) -> FunctionVersionInfo:
     '''Update function'''

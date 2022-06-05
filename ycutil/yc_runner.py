@@ -1,5 +1,6 @@
+import re
 from typing import Any
-from json import loads as load_json
+from json import loads as load_json, JSONDecodeError
 from subprocess import CalledProcessError, run, PIPE
 from .logger import logger
 
@@ -14,7 +15,12 @@ def run_yc(*args: str) -> Any:
             logger.info(proc.stdout)
         if proc.stderr:
             logger.info(proc.stderr)
-        return load_json(proc.stdout) if proc.stdout else None
+        if proc.stdout:
+            try:
+                return load_json(proc.stdout)
+            except JSONDecodeError:
+                pass
+        return proc.stdout
     except CalledProcessError as err:
         logger.error('yc.err')
         if err.stdout:
