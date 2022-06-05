@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-from ycutil import run_cli
+from ycfunc import run_cli
 
 def main() -> None:
     run_cli()
