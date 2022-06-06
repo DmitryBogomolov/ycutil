@@ -1,14 +1,14 @@
-from typing import Any, Dict, List, cast
+from typing import Any, List, cast
 from datetime import datetime
 from test_util import BaseTests, make_yc_mock, make_yc_call
 from ycfunc import (
-    Config, FunctionLog,
+    FunctionLog,
     get_function_logs,
 )
 from ycfunc.util import DATE_FORMAT
 
-def make_raw_log(request_id: str, **kwargs: Dict[str, Any]) -> Any:
-    obj = {
+def make_raw_log(request_id: str, **kwargs: Any) -> Any:
+    obj: Any = {
         'json_payload': {'request_id': request_id},
     }
     if kwargs.get('is_start'):
