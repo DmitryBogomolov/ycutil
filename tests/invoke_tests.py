@@ -1,18 +1,17 @@
 from typing import Any
 from unittest.mock import Mock, patch, call
+from datetime import datetime
 from test_util import BaseTests, make_yc_mock, make_yc_call
-from common_tests import TEST_DATE_STR
+from common_tests import make_test_pair
 from ycfunc import (
-    Config,
     invoke_function, invoke_function_url, is_url_invoke, set_url_invoke,
 )
 
 class InvokeTests(BaseTests):
     def test_invoke(self):
         self.run_mock.return_value = make_yc_mock(0)
-        cfg = Config('/test-dir', 'test-function', 'index.handler')
 
-        ret = invoke_function(cfg)
+        ret = invoke_function(self.cfg)
 
         self.assertEqual(
             self.run_mock.call_args,
@@ -22,9 +21,8 @@ class InvokeTests(BaseTests):
 
     def test_invoke_with_data(self):
         self.run_mock.return_value = make_yc_mock(0)
-        cfg = Config('/test-dir', 'test-function', 'index.handler')
 
-        ret = invoke_function(cfg, 'test-data')
+        ret = invoke_function(self.cfg, 'test-data')
 
         self.assertEqual(
             self.run_mock.call_args,
@@ -35,9 +33,8 @@ class InvokeTests(BaseTests):
     def check_unpack_result(self, yc_ret: Any, expected_ret: Any, desc: str) -> None:
         self.run_mock.reset_mock()
         self.run_mock.return_value = make_yc_mock(yc_ret)
-        cfg = Config('/test-dir', 'test-function', 'index.handler')
 
-        ret = invoke_function(cfg)
+        ret = invoke_function(self.cfg)
 
         self.assertEqual(ret, expected_ret, desc)
 
@@ -53,9 +50,8 @@ class InvokeTests(BaseTests):
     def check_pack_data(self, data: Any, expected_yc_arg: Any, desc: str) -> None:
         self.run_mock.reset_mock()
         self.run_mock.return_value = make_yc_mock(0)
-        cfg = Config('/test-dir', 'test-function', 'index.handler')
 
-        invoke_function(cfg, data)
+        invoke_function(self.cfg, data)
 
         self.assertEqual(
             self.run_mock.call_args,
@@ -73,19 +69,12 @@ class InvokeTests(BaseTests):
 
     @patch('ycfunc.invoke.post')
     def test_invoke_url(self, post_mock: Mock) -> None:
-        self.run_mock.return_value = make_yc_mock(dict(
-            id='test-id',
-            name='test-name',
-            created_at=TEST_DATE_STR,
-            status='OK',
-            http_invoke_url='http://test',
-            log_group_id='test-log-group',
-        ))
-        cfg = Config('/test-dir', 'test-function', 'index.handler')
+        raw, info = make_test_pair('test-id', 'test-name', datetime(2000, 1, 2))
+        self.run_mock.return_value = make_yc_mock(raw)
         post_mock.return_value = Mock()
         post_mock.return_value.text = 'test-value'
 
-        ret = invoke_function_url(cfg, 'test-data')
+        ret = invoke_function_url(self.cfg, 'test-data')
 
         self.assertEqual(
             self.run_mock.call_args,
@@ -93,15 +82,14 @@ class InvokeTests(BaseTests):
         )
         self.assertEqual(
             post_mock.call_args,
-            call('http://test', data='test-data'),
+            call(info.http_invoke_url, data='test-data'),
         )
         self.assertEqual(ret, 'test-value')
 
     def test_is_url_invoke_false(self) -> None:
         self.run_mock.return_value = make_yc_mock([])
-        cfg = Config('/test-dir', 'test-function', 'index.handler')
 
-        ret = is_url_invoke(cfg)
+        ret = is_url_invoke(self.cfg)
 
         self.assertEqual(
             self.run_mock.call_args,
@@ -119,9 +107,8 @@ class InvokeTests(BaseTests):
                 },
             }
         ])
-        cfg = Config('/test-dir', 'test-function', 'index.handler')
 
-        ret = is_url_invoke(cfg)
+        ret = is_url_invoke(self.cfg)
 
         self.assertEqual(
             self.run_mock.call_args,
@@ -131,9 +118,8 @@ class InvokeTests(BaseTests):
 
     def test_set_url_invoke_false(self) -> None:
         self.run_mock.return_value = make_yc_mock(None)
-        cfg = Config('/test-dir', 'test-function', 'index.handler')
 
-        set_url_invoke(cfg, False)
+        set_url_invoke(self.cfg, False)
 
         self.assertEqual(
             self.run_mock.call_args,
@@ -142,9 +128,8 @@ class InvokeTests(BaseTests):
 
     def test_set_url_invoke_true(self) -> None:
         self.run_mock.return_value = make_yc_mock(None)
-        cfg = Config('/test-dir', 'test-function', 'index.handler')
 
-        set_url_invoke(cfg, True)
+        set_url_invoke(self.cfg, True)
 
         self.assertEqual(
             self.run_mock.call_args,

@@ -46,9 +46,8 @@ class LogsTests(BaseTests):
             make_raw_log('id-1', is_end=True, timestamp=datetime(2000, 1, 12)),
             make_raw_log('id-1', is_report=True),
         ])
-        cfg = Config('/test-dir', 'test-function', 'index.handler')
 
-        ret = get_function_logs(cfg)
+        ret = get_function_logs(self.cfg)
 
         self.assertEqual(
             self.run_mock.call_args,
@@ -69,9 +68,8 @@ class LogsTests(BaseTests):
             make_raw_log('id-1', message='World'),
             make_raw_log('id-1', is_report=True),
         ])
-        cfg = Config('/test-dir', 'test-function', 'index.handler')
 
-        ret = get_function_logs(cfg)
+        ret = get_function_logs(self.cfg)
 
         self.assertEqual(
             ret,
@@ -91,9 +89,8 @@ class LogsTests(BaseTests):
             make_raw_log('id-2', message='World'),
             make_raw_log('id-2', is_report=True),
         ])
-        cfg = Config('/test-dir', 'test-function', 'index.handler')
 
-        ret = get_function_logs(cfg)
+        ret = get_function_logs(self.cfg)
 
         self.assertEqual(
             ret,

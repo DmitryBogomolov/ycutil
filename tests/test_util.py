@@ -2,6 +2,7 @@ from typing import Any, List, Union
 from unittest import TestCase
 from unittest.mock import Mock, _Call, patch, call, sentinel
 from json import dumps
+from ycfunc import Config
 
 TEST_PIPE = sentinel.TEST_PIPE
 
@@ -25,3 +26,4 @@ class BaseTests(TestCase):
         pipe_patcher.start()
         self.addCleanup(run_patcher.stop)
         self.addCleanup(pipe_patcher.stop)
+        self.cfg = Config('/test-dir', 'test-function', 'index.handler')
