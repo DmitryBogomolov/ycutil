@@ -1,14 +1,11 @@
 from typing import Any
+from unittest.mock import Mock, patch, call
 from test_util import BaseTests, make_yc_mock, make_yc_call
-from datetime import datetime
+from common_tests import TEST_DATE_STR
 from ycfunc import (
     Config,
-    invoke_function,
+    invoke_function, invoke_function_url, is_url_invoke, set_url_invoke,
 )
-from ycfunc.util import DATE_FORMAT
-
-TEST_DATE = datetime(2000, 1, 2)
-TEST_DATE_STR = TEST_DATE.strftime(DATE_FORMAT)
 
 class InvokeTests(BaseTests):
     def test_invoke(self):
@@ -73,3 +70,83 @@ class InvokeTests(BaseTests):
         self.check_pack_data('test', 'test', 'str')
         self.check_pack_data([1, 2, 3], '[1, 2, 3]', 'list')
         self.check_pack_data({'a': 1}, '{"a": 1}', 'dict')
+
+    @patch('ycfunc.invoke.post')
+    def test_invoke_url(self, post_mock: Mock) -> None:
+        self.run_mock.return_value = make_yc_mock(dict(
+            id='test-id',
+            name='test-name',
+            created_at=TEST_DATE_STR,
+            status='OK',
+            http_invoke_url='http://test',
+            log_group_id='test-log-group',
+        ))
+        cfg = Config('/test-dir', 'test-function', 'index.handler')
+        post_mock.return_value = Mock()
+        post_mock.return_value.text = 'test-value'
+
+        ret = invoke_function_url(cfg, 'test-data')
+
+        self.assertEqual(
+            self.run_mock.call_args,
+            make_yc_call('get --name test-function')
+        )
+        self.assertEqual(
+            post_mock.call_args,
+            call('http://test', data='test-data'),
+        )
+        self.assertEqual(ret, 'test-value')
+
+    def test_is_url_invoke_false(self) -> None:
+        self.run_mock.return_value = make_yc_mock([])
+        cfg = Config('/test-dir', 'test-function', 'index.handler')
+
+        ret = is_url_invoke(cfg)
+
+        self.assertEqual(
+            self.run_mock.call_args,
+            make_yc_call('list-access-bindings --name test-function'),
+        )
+        self.assertEqual(ret, False)
+
+    def test_is_url_invoke_true(self) -> None:
+        self.run_mock.return_value = make_yc_mock([
+            {
+                'role_id': 'serverless.functions.invoker',
+                'subject': {
+                    'id': 'allUsers',
+                    'type': 'system',
+                },
+            }
+        ])
+        cfg = Config('/test-dir', 'test-function', 'index.handler')
+
+        ret = is_url_invoke(cfg)
+
+        self.assertEqual(
+            self.run_mock.call_args,
+            make_yc_call('list-access-bindings --name test-function'),
+        )
+        self.assertEqual(ret, True)
+
+    def test_set_url_invoke_false(self) -> None:
+        self.run_mock.return_value = make_yc_mock(None)
+        cfg = Config('/test-dir', 'test-function', 'index.handler')
+
+        set_url_invoke(cfg, False)
+
+        self.assertEqual(
+            self.run_mock.call_args,
+            make_yc_call('deny-unauthenticated-invoke --name test-function'),
+        )
+
+    def test_set_url_invoke_true(self) -> None:
+        self.run_mock.return_value = make_yc_mock(None)
+        cfg = Config('/test-dir', 'test-function', 'index.handler')
+
+        set_url_invoke(cfg, True)
+
+        self.assertEqual(
+            self.run_mock.call_args,
+            make_yc_call('allow-unauthenticated-invoke --name test-function'),
+        )
