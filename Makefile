@@ -10,4 +10,4 @@ typecheck:
 	@mypy .
 
 test:
-	@python3 -m unittest discover --verbose --start-directory tests --pattern *_test.py
+	@python3 -m unittest discover --verbose --start-directory tests --pattern *_tests.py

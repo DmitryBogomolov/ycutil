@@ -1,19 +1,11 @@
-from unittest import TestCase
-from unittest.mock import patch, Mock, call
-from json import dumps
+from test_util import BaseTests, make_yc_mock, make_yc_call
 from datetime import datetime
 from ycfunc import Config, FunctionInfo, get_function_info
 from ycfunc.util import DATE_FORMAT
 
-class TestYCFunc(TestCase):
-    def setUp(self) -> None:
-        run_patcher = patch('ycfunc.yc_runner.run')
-        self.run_mock = run_patcher.start()
-        self.addCleanup(run_patcher.stop)
-
+class CommonTests(BaseTests):
     def test_get_function_info(self) -> None:
-        ret = Mock(['stdout', 'stderr'])
-        ret.stdout = dumps(dict(
+        ret = make_yc_mock(dict(
             id='test-id',
             name='test-name',
             created_at=datetime(2000, 1, 2).strftime(DATE_FORMAT),
@@ -22,13 +14,13 @@ class TestYCFunc(TestCase):
             log_group_id='test-log-group',
         ))
         self.run_mock.return_value = ret
-        cfg = Config('/test', 'test-function', 'index.handler')
+        cfg = Config('/test-dir', 'test-function', 'index.handler')
 
         info = get_function_info(cfg)
 
         self.assertEqual(
             self.run_mock.call_args,
-            call('yc serverless function get --name test-function --no-user-output --format json'.split(' '), check=True, encoding='utf8', stdout=-1, stderr=-1),
+            make_yc_call('get --name test-function'),
         )
         self.assertEqual(
             info,
