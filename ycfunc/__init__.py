@@ -19,8 +19,7 @@ from .update import (
 )
 from .invoke import (
     invoke_function,
-)
-from .url import (
+    invoke_function_url,
     is_url_invoke,
     set_url_invoke,
 )

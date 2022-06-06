@@ -33,3 +33,21 @@ def invoke_function_url(cfg: Config, data: Any = None) -> Any:
     func_url = func_data['http_invoke_url']
     response = post(func_url, data=data)
     return response.text
+
+def is_url_invoke(cfg: Config) -> bool:
+    '''Get url invokation status'''
+    out = run_yc('list-access-bindings', '--name', cfg.name)
+    return TARGET_BINDING in out
+
+TARGET_BINDING = {
+    'role_id': 'serverless.functions.invoker',
+    'subject': {
+        'id': 'allUsers',
+        'type': 'system',
+    },
+}
+
+def set_url_invoke(cfg: Config, state: bool) -> None:
+    '''Set url invokation status'''
+    action = ('allow' if state else 'deny') + '-unauthenticated-invoke'
+    run_yc(action, '--name', cfg.name)

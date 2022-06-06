@@ -20,8 +20,6 @@ from .update import (
 from .invoke import (
     invoke_function,
     invoke_function_url,
-)
-from .url import (
     is_url_invoke,
     set_url_invoke,
 )
