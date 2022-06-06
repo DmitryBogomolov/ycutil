@@ -1,6 +1,5 @@
 from typing import NamedTuple, List, Dict, Any, cast
 from datetime import datetime
-from itertools import groupby
 from .config import Config
 from .util import RawInfo, parse_date, dump_named_tuple
 from .yc_runner import run_yc
@@ -40,31 +39,34 @@ def extract_report_part(message: str, start: str, end: str) -> str:
 def get_function_logs(cfg: Config) -> List[FunctionLog]:
     '''Get function logs'''
     out = run_yc('logs', '--name', cfg.name)
-    logs = []
-    for request_id, entries in groupby(out, key=get_request_id):
-        args: Dict[str, Any] = {'request_id': request_id}
-        messages = []
-        for log_entry in entries:
-            message = cast(str, log_entry['message'])
-            if log_entry.get('level') == 'INFO':
-                timestamp = parse_date(log_entry['timestamp'])
-                if is_start_message(message, request_id):
-                    args['start_time'] = timestamp
-                elif is_end_message(message, request_id):
-                    args['end_time'] = timestamp
-                elif is_report_message(message, request_id):
-                    args['duration'] = float(extract_report_part(message, 'Duration: ', ' ms'))
-                    args['billed_duration'] = float(extract_report_part(message, 'Billed Duration: ', ' ms'))
-                    args['memory_size'] = int(extract_report_part(message, 'Memory Size: ', ' MB'))
-                    args['max_memory_used'] = int(extract_report_part(message, 'Max Memory Used: ', ' MB'))
-                    args['queuing_duration'] = float(extract_report_part(message, 'Queuing Duration: ', ' ms'))
-                    try:
-                        args['function_init_duration'] = float(extract_report_part(message, 'Function Init Duration: ', ' ms'))
-                    except:
-                        pass
-            else:
-                messages.append(message)
+    logs: List[FunctionLog] = []
+    pending: Dict[str, Dict[str, Any]] = {}
+    for log_entry in out:
+        request_id = get_request_id(log_entry)
+        args = pending.get(request_id)
+        if not args:
+            args = {'request_id': request_id, 'messages': []}
+            pending[request_id] = args
+        message = cast(str, log_entry['message'])
+        if log_entry.get('level') == 'INFO':
+            timestamp = parse_date(log_entry['timestamp'])
+            if is_start_message(message, request_id):
+                args['start_time'] = timestamp
+            elif is_end_message(message, request_id):
+                args['end_time'] = timestamp
+            elif is_report_message(message, request_id):
+                args['duration'] = float(extract_report_part(message, 'Duration: ', ' ms'))
+                args['billed_duration'] = float(extract_report_part(message, 'Billed Duration: ', ' ms'))
+                args['memory_size'] = int(extract_report_part(message, 'Memory Size: ', ' MB'))
+                args['max_memory_used'] = int(extract_report_part(message, 'Max Memory Used: ', ' MB'))
+                args['queuing_duration'] = float(extract_report_part(message, 'Queuing Duration: ', ' ms'))
+                try:
+                    args['function_init_duration'] = float(extract_report_part(message, 'Function Init Duration: ', ' ms'))
+                except:
+                    pass
 
-        args['messages'] = messages
-        logs.append(FunctionLog(**args))
+                logs.append(FunctionLog(**args))
+                pending.pop(request_id)
+        else:
+            args['messages'].append(message)
     return logs

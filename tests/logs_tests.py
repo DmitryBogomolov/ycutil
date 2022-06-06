@@ -81,11 +81,11 @@ class LogsTests(BaseTests):
     def test_get_function_logs_several(self) -> None:
         self.run_mock.return_value = make_yc_mock([
             make_raw_log('id-1', is_start=True, timestamp=datetime(2000, 1, 23)),
-            make_raw_log('id-1', is_end=True, timestamp=datetime(2000, 1, 24)),
-            make_raw_log('id-1', is_report=True),
             make_raw_log('id-2', is_start=True, timestamp=datetime(2000, 1, 11)),
+            make_raw_log('id-1', is_end=True, timestamp=datetime(2000, 1, 24)),
             make_raw_log('id-2', message='Hello'),
             make_raw_log('id-2', is_end=True, timestamp=datetime(2000, 1, 12)),
+            make_raw_log('id-1', is_report=True),
             make_raw_log('id-2', message='World'),
             make_raw_log('id-2', is_report=True),
         ])
