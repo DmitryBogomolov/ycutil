@@ -1,8 +1,7 @@
 install-tools:
 	pip3 install pylint
 	pip3 install mypy
-	pip3 install requests
-	pip3 install types-requests
+	pip3 install -r requirements.txt
 
 lint:
 	@pylint *.py
