@@ -15,4 +15,5 @@ setup(
     packages=['ycfunc'],
     install_requires=requirements,
     python_requires='>=3.6',
+    scripts=['./scripts/ycfunc'],
 )
