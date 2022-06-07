@@ -1,5 +1,4 @@
-from platform import python_version
-from setuptools import setup
+from setuptools import setup    # type: ignore
 
 with open('./README.md', encoding='utf8') as file_obj:
     long_description = file_obj.read()
