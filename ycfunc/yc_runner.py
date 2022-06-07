@@ -1,4 +1,3 @@
-import re
 from typing import Any
 from json import loads as load_json, JSONDecodeError
 from subprocess import CalledProcessError, run, PIPE

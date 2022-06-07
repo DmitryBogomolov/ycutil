@@ -4,24 +4,22 @@ from argparse import ArgumentParser
 from inspect import getdoc, getfullargspec
 from json import dumps as dump_json
 from .config import Config
-from .function_common import (
+from .common import (
     create_function,
     delete_function,
     get_function_info,
     list_functions,
 )
-from .function_logs import (
+from .logs import (
     get_function_logs,
 )
-from .function_update import (
+from .update import (
     update_function,
     get_function_versions,
 )
-from .function_invoke import (
+from .invoke import (
     invoke_function,
     invoke_function_url,
-)
-from .function_url import (
     is_url_invoke,
     set_url_invoke,
 )
@@ -30,17 +28,17 @@ from .logger import set_file_log
 CommandFunc = Callable[..., Any]
 
 command_descriptors: List[Tuple[str, CommandFunc]] = [
-    ('function-create', create_function),
-    ('function-delete', delete_function),
-    ('function-list', list_functions),
-    ('function-info', get_function_info),
-    ('function-logs', get_function_logs),
-    ('function-update', update_function),
-    ('function-versions', get_function_versions),
-    ('function-invoke', invoke_function),
-    ('function-invoke-url', invoke_function_url),
-    ('function-is-url-invoke', is_url_invoke),
-    ('function-set-url-invoke', set_url_invoke),
+    ('create', create_function),
+    ('delete', delete_function),
+    ('list', list_functions),
+    ('info', get_function_info),
+    ('logs', get_function_logs),
+    ('update', update_function),
+    ('versions', get_function_versions),
+    ('invoke', invoke_function),
+    ('invoke-url', invoke_function_url),
+    ('is-url-invoke', is_url_invoke),
+    ('set-url-invoke', set_url_invoke),
 ]
 
 Wrapper = Callable[[Dict[str, Any]], None]

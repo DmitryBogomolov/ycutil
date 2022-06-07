@@ -17,3 +17,4 @@ jobs:
       - run: make install-tools
       - run: make typecheck
       - run: make lint
+      - run: make test
